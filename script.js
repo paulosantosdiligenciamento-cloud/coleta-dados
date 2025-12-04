@@ -1,61 +1,79 @@
-emailjs.init("twBjj51IiTzZ6hHJA"); // PUBLIC KEY
+body {
+  font-family: Arial, sans-serif;
+  background: #eef1f5;
+  margin: 0;
+  padding: 20px;
+}
 
-document.getElementById("dataForm").addEventListener("submit", function(e) {
-    e.preventDefault();
+.container {
+  max-width: 600px;
+  margin: auto;
+  background: #ffffff;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+  animation: fadeIn 0.4s ease;
+}
 
-    const arquivos = document.getElementById("fotos").files;
-    const pdfsBase64 = [];
-    const leitor = new FileReader();
+h2 {
+  text-align: center;
+  font-size: 26px;
+  margin-bottom: 25px;
+  color: #0a4fa3;
+}
 
-    function processarFoto(i) {
-        if (i >= arquivos.length) {
-            enviarDados();
-            return;
-        }
+label {
+  display: block;
+  margin-top: 15px;
+  font-weight: bold;
+  color: #333;
+}
 
-        leitor.onload = function(evt) {
-            const { jsPDF } = window.jspdf;
-            const pdf = new jsPDF();
-            pdf.addImage(evt.target.result, "JPEG", 10, 10, 180, 160);
-            pdfsBase64.push(pdf.output("datauristring"));
-            processarFoto(i + 1);
-        };
+input, textarea {
+  width: 100%;
+  padding: 12px;
+  margin-top: 6px;
+  border-radius: 8px;
+  border: 1px solid #bfc6d1;
+  font-size: 15px;
+  transition: 0.3s;
+}
 
-        leitor.readAsDataURL(arquivos[i]);
-    }
+input:focus, textarea:focus {
+  border-color: #0a7bf2;
+  box-shadow: 0 0 5px rgba(10, 123, 242, 0.4);
+  outline: none;
+}
 
-    function enviarDados() {
-        const dados = {
-            proprietario: document.getElementById("proprietario").value,
-            cpf: document.getElementById("cpf").value,
-            endereco: document.getElementById("endereco").value,
-            matricula: document.getElementById("matricula").value,
-            descricao:
-                document.getElementById("descricao").value +
-                "\n\nData do relatório: " +
-                new Date().toLocaleDateString("pt-BR"),
-            dataEnvio: new Date().toLocaleString("pt-BR"),
-            pdfs: pdfsBase64.join("\n\n")
-        };
+button {
+  width: 100%;
+  padding: 14px;
+  margin-top: 25px;
+  background: linear-gradient(90deg, #0a7bf2, #0662c4);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
 
-        emailjs
-            .send("service_761ouhk", "template_jvlzymf", {
-                to_email: "paulosantos.diligenciamento@gmail.com",
-                dados_json: JSON.stringify(dados, null, 2)
-            })
-            .then(() => {
-                document.getElementById("successMsg").style.display = "block";
-                document.getElementById("dataForm").reset();
-            })
-            .catch((err) => {
-                alert("Erro ao enviar: " + err);
-                console.error(err);
-            });
-    }
+button:hover {
+  opacity: 0.9;
+  transform: scale(1.02);
+}
 
-    if (!arquivos || arquivos.length === 0) {
-        enviarDados();
-    } else {
-        processarFoto(0);
-    }
-});
+.success {
+  margin-top: 20px;
+  color: #1a8f3c;
+  font-weight: bold;
+  text-align: center;
+  display: none;
+  font-size: 16px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
